@@ -1,0 +1,49 @@
+body{
+	font:normal normal 150% Georgia, serif;
+	height:100%;
+}
+
+.container{
+	background-color:white;
+	margin: 0 auto; 
+	width: 90%; 
+	overflow: auto;
+	min-height:90%;
+}
+
+.footer{
+	float: clear;
+	margin: 0 auto;
+	width: 100%; 
+	text-align: center;
+	font:normal normal 15px Georgia, serif;
+}
+
+.menu{
+	text-align: center;
+}
+
+.menu li{
+	display: inline;
+}
+
+.menu a:link	{text-decoration: none;}
+.menu a:visited	{text-decoration: none;}
+.menu a:hover	{text-decoration: none;}
+.menu a:active	{text-decoration: none;}
+
+.tabDati {
+	width:100%; 
+}
+
+.tabDati  {
+	width:100%; 
+}
+
+tr.odd{
+	background-color:white;
+}
+
+tr.odd{
+	background-color:light-gray;
+}
