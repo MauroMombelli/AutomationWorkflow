@@ -64,7 +64,7 @@ public class CrudPage extends PageHtml{
 	}
 
 	@Override
-	public void executePost(String[] url, Map<String, String> valori, HttpExchange t) throws PageException {
+	public void executePost(String[] url, Map<String, String> valori, HttpExchange t, SessionData session) throws PageException {
 		// TODO Auto-generated method stub
 		
 	}

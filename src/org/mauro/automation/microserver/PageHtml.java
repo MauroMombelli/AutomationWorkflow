@@ -57,28 +57,30 @@ public abstract class PageHtml extends Page {
 	 * @return
 	 * @throws PageException
 	 */
-	public byte[] getBody(String url[], Map<String, String> valori, HttpExchange t) throws PageException{
+	public byte[] getBody(String url[], Map<String, String> valori, HttpExchange t, SessionData session) throws PageException{
 		long time = System.currentTimeMillis();
 		
 		loadBase();
 		
-		SessionData session = SessionManager.fromCookie(t);
-		
-		countHowManyVisitUserDoes(session);		
+		long visitCount = countHowManyVisitUserDoes(session);		
 		
 		String response = htmlBase.replaceFirst("<!--HTML_TITLE-->", title).replaceFirst("<!--HTML_BODY-->", getHtml(url, valori, session));
-		response = response.replace("<!--CREATION_TIME-->", "pagina creata in " + (System.currentTimeMillis() - time) + " ms");
+		response = response.replace("<!--CREATION_TIME-->", "pagina creata in " + (System.currentTimeMillis() - time) + " ms, ed è stata visitata da te "+visitCount);
 		
 		Headers responseHeaders = t.getResponseHeaders();
+		/*
 		responseHeaders.add("Content-Type", "text/html;charset=utf-8");
 		responseHeaders.add("Cache-Control", "no-cache, must-revalidate");
 		responseHeaders.add("Pragma", "no-cache");
 		responseHeaders.add("Expires", "0");
-		
+		*/
 		if ( session.isNew() ){
-			String cookie = SessionManager.toCookie(session);
-			responseHeaders.add("Set-Cookie", cookie );
-			session.setNew(false);
+			String cookie = SessionManager.toCookie(session, responseHeaders);
+			if (cookie!=null){
+				responseHeaders.add("Set-Cookie", cookie );
+				log.log(Level.INFO, "setting cookie");
+				session.setNew(false);
+			}
 		}
 
 		try {
@@ -89,18 +91,27 @@ public abstract class PageHtml extends Page {
 		return null;
 	}
 	
-	private void countHowManyVisitUserDoes(SessionData session) {
-		String value = session.getValue("request_number_"+getBasePath());
+	private long countHowManyVisitUserDoes(SessionData session) {
+		String value = session.getValue("r_number_"+getBasePath() );
 		long val = 0;
 		if (value != null){
+			log.log(Level.FINEST, "found cookie "+value);
 			try{
 				val = Long.parseLong(value);
 			}catch(NumberFormatException e){
-				log.log(Level.WARNING, "bsd cookie "+value, e);
+				log.log(Level.WARNING, "bad cookie "+value, e);
 			}
+		}else{
+			log.log(Level.FINE, "new cookie for "+getBasePath());
+			/*
+			for (Entry<String, String> entry : session.getValues().entrySet()){
+				System.out.println("v: "+entry.getKey()+" \t"+entry.getValue());
+			}
+			*/
 		}
 		val++;
-		session.setValue("request_number_"+getBasePath(), val+"");
+		session.setValue("r_number_"+getBasePath(), val+"");
+		return val;
 	}
 	/**
 	 * by default html page will redirect to GET method if POST is used.
@@ -113,7 +124,7 @@ public abstract class PageHtml extends Page {
 	 * @return true if post was successfully (or cannot be done and user must be redirected somewhere), false  
 	 */
 	@Override
-	public void executePost(String[] url, Map<String, String> valori, HttpExchange t) throws PageException {
+	public void executePost(String[] url, Map<String, String> valori, HttpExchange t, SessionData session) throws PageException {
 		//no POST to homepage, system will redirect to get
 	}
 	

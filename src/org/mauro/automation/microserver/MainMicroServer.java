@@ -3,6 +3,7 @@ package org.mauro.automation.microserver;
 import org.mauro.automation.microserver.page.CssHandler;
 import org.mauro.automation.microserver.page.FavIconHandler;
 import org.mauro.automation.microserver.page.HomePage;
+import org.mauro.automation.microserver.page.TestPost;
 
 public class MainMicroServer {
 
@@ -19,6 +20,9 @@ public class MainMicroServer {
 			baseServer.addPage( new FavIconHandler() );
 			/*base handler*/
 			baseServer.addPage( new HomePage() );
+			
+			/*post exampletest*/
+			baseServer.addPage( new TestPost() );
 			
 			/*STANDARD PAGE*/
 		} catch (Exception e) {

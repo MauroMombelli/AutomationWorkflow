@@ -12,56 +12,52 @@ import java.util.logging.Logger;
 
 import org.mauro.automation.LogUtils;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
 public class SessionManager {
+	private static String dividerIn = "; ";
 	private static final Logger log = LogUtils.loggerForThisClass();
-	
+
 	public static SessionData fromCookie(HttpExchange t) {
 		List<String> list = t.getRequestHeaders().get("Cookie");
-		if (list != null){
-			if (list.size() > 0){
-				return new SessionData(false, stringToMap( list.get(0) ));
+		if (list != null) {
+			/*for (String c : list) {
+				System.out.println("found cookie fromCookie: " + c);
+			}*/
+			if (list.size() > 0) {
+				return new SessionData(false, stringToMap(list.get(0)));
 			}
 		}
 		return new SessionData(true);
 	}
 
-	public static String toCookie(SessionData session) {
-		return mapToString( session.getValues() );
-	}
-
-	public static String mapToString(Map<String, String> map) {
-		StringBuilder stringBuilder = new StringBuilder();
-
-		for (Entry<String, String> entry : map.entrySet()) {
-			if (stringBuilder.length() > 0) {
-				stringBuilder.append("; ");
-			}
-			String value = entry.getValue();
+	public static String toCookie(SessionData session, Headers responseHeaders) {
+		//return mapToString(session.getValues());
+		
+		for (Entry<String, String> entry : session.values.entrySet()) {
 			try {
-				stringBuilder.append( URLEncoder.encode(entry.getKey(), "UTF-8") );
-				stringBuilder.append("=");
-				stringBuilder.append(value != null ? URLEncoder.encode(value, "UTF-8") : "");
+				responseHeaders.add("Set-Cookie",  URLEncoder.encode(entry.getKey(), "UTF-8")+"="+URLEncoder.encode(entry.getValue(),"utf-8" ));
 			} catch (UnsupportedEncodingException e) {
 				log.log(Level.SEVERE, "This method requires UTF-8 encoding support", e);
 			}
 		}
-
-		return stringBuilder.toString();
+		return null;
+		
 	}
 
 	public static Map<String, String> stringToMap(String input) {
 		Map<String, String> map = new HashMap<String, String>();
 
-		String[] nameValuePairs = input.split("; ");
+		String[] nameValuePairs = input.split(dividerIn);
 		for (String nameValuePair : nameValuePairs) {
 			String[] nameValue = nameValuePair.split("=");
-			try {
-				map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(nameValue[1], "UTF-8") : "");
-			} catch (UnsupportedEncodingException e) {
-				log.log(Level.SEVERE, "This method requires UTF-8 encoding support", e);
-			}
+			if (nameValue.length == 2)
+				try {
+					map.put(URLDecoder.decode(nameValue[0], "UTF-8"), nameValue.length > 1 ? URLDecoder.decode(nameValue[1], "UTF-8") : "");
+				} catch (UnsupportedEncodingException e) {
+					log.log(Level.SEVERE, "This method requires UTF-8 encoding support", e);
+				}
 		}
 
 		return map;

@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.mauro.automation.LogUtils;
 import org.mauro.automation.microserver.Page;
 import org.mauro.automation.microserver.exception.PageException;
+import org.mauro.automation.microserver.sessions.SessionData;
 
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
@@ -22,7 +23,7 @@ public class FavIconHandler extends Page{
 	}
 	
 	@Override
-	public byte[] getBody(String[] uri, Map<String, String> valori, HttpExchange t) throws PageException {
+	public byte[] getBody(String[] uri, Map<String, String> valori, HttpExchange t, SessionData session) throws PageException {
 		log.finest("requested favicon.ico");
 		File f = new File( "favicon.ico" );
 		if ( f.exists() ){
@@ -44,7 +45,7 @@ public class FavIconHandler extends Page{
 	}
 
 	@Override
-	public void executePost(String[] url, Map<String, String> valori, HttpExchange t) throws PageException {
+	public void executePost(String[] url, Map<String, String> valori, HttpExchange t, SessionData session) throws PageException {
 		//no POST to imageicon, WTF! do nothing, system will redirect to get
 	}
 }

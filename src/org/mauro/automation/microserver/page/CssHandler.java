@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import org.mauro.automation.LogUtils;
 import org.mauro.automation.microserver.Page;
 import org.mauro.automation.microserver.exception.PageException;
+import org.mauro.automation.microserver.sessions.SessionData;
 
 import com.sun.net.httpserver.Headers;
 
@@ -21,7 +22,7 @@ public class CssHandler extends Page{
 	}
 	
 	@Override
-	public byte[] getBody(String[] uri, Map<String, String> valori, com.sun.net.httpserver.HttpExchange t) throws PageException{
+	public byte[] getBody(String[] uri, Map<String, String> valori, com.sun.net.httpserver.HttpExchange t, SessionData session) throws PageException{
 		log.finest("requested css");
 		
 		String path = t.getRequestURI().toString();
@@ -52,7 +53,7 @@ public class CssHandler extends Page{
 	}
 
 	@Override
-	public void executePost(String[] url, Map<String, String> valori, com.sun.net.httpserver.HttpExchange t)throws PageException {
+	public void executePost(String[] url, Map<String, String> valori, com.sun.net.httpserver.HttpExchange t, SessionData session)throws PageException {
 		//no POST to CSS, WTF! do nothing, system will redirect to get
 	}
 
