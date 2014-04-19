@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 public class SessionData {
 	private boolean isNew = true;
+	private boolean isUpdated = false;
 	Map<String, String> values = new HashMap<>();
 	
 	public SessionData(boolean isNew) {
@@ -23,13 +24,17 @@ public class SessionData {
 	public boolean isNew() {
 		return isNew;
 	}
+	
+	public boolean isUpdated() {
+		return isUpdated;
+	}
 
 	public void setNew(boolean isNew) {
 		this.isNew = isNew;
 	}
 	
 	public String setValue(String id, String value){
-		isNew = true;
+		isUpdated = true;
 		return values.put(id, value);
 	}
 
